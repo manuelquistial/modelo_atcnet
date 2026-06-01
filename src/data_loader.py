@@ -110,7 +110,8 @@ def load_bci2a_mat(
     data_return = np.zeros((n_tests, N_EEG_CHANNELS, WINDOW_LENGTH), dtype=np.float64)
     class_return = np.zeros(n_tests, dtype=np.int64)
 
-    mat = sio.loadmat(str(mat_path), squeeze_me=True, struct_as_record=False)
+    # Same as EEG-ATCNet preprocess.load_BCI2a_data (default loadmat, no struct_as_record=False).
+    mat = sio.loadmat(str(mat_path))
     if "data" not in mat:
         raise KeyError(f"'data' field not found in {mat_path.name}. Keys: {list(mat.keys())}")
 
@@ -118,14 +119,10 @@ def load_bci2a_mat(
     no_valid = 0
 
     for ii in range(a_data.size):
-        a_data1 = a_data.flat[ii]
-        # Official nesting: a_data1[0,0] → run struct with X, trial, y, ...
-        try:
-            a_data3 = a_data1[0, 0]
-        except (TypeError, IndexError):
-            a_data3 = a_data1
-
-        a_X = a_data3[0]
+        a_data1 = a_data[0, ii]
+        a_data2 = [a_data1[0, 0]]
+        a_data3 = a_data2[0]
+        a_X = np.asarray(a_data3[0])
         a_trial = np.asarray(a_data3[1]).flatten()
         a_y = np.asarray(a_data3[2]).flatten()
         a_artifacts = np.asarray(a_data3[5]).flatten()
