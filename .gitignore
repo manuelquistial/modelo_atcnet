@@ -24,8 +24,9 @@ ENV/
 .ipynb_checkpoints/
 
 # Data (upload on Paperspace / locally — not in git)
-data/raw/**/*.gdf
+data/mne_cache/
 data/raw/**/*.mat
+data/raw/**/*.gdf
 data/processed/
 
 # Training outputs (regenerate on machine)

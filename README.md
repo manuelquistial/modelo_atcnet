@@ -19,16 +19,24 @@ End-to-end pipeline for EEG motor imagery (4 classes) with:
 
 ## Dataset
 
-Download [BCI Competition IV Dataset 2a](http://www.bbci.de/competition/iv/) GDF files and place them in:
+Same **`.mat`** format as [Altaheri/EEG-ATCNet](https://github.com/Altaheri/EEG-ATCNet) (MOABB `BNCI2014_001`):
+
+```bash
+python scripts/download_bci2a.py --yes
+```
+
+Files end up in `data/raw/BCICIV_2a_mat/`:
 
 ```
-data/raw/BCICIV_2a_gdf/
-├── A01T.gdf
-├── A01E.gdf
+data/raw/BCICIV_2a_mat/
+├── A01T.mat
+├── A01E.mat
 ├── ...
-├── A09T.gdf
-└── A09E.gdf
+├── A09T.mat
+└── A09E.mat
 ```
+
+Manual: [BNCI Horizon 001-2014](http://bnci-horizon-2020.eu/database/data-sets) or copy from the official repo layout (`s1/A01T.mat`, …).
 
 | Property | Value |
 |----------|--------|
@@ -100,7 +108,7 @@ python scripts/run_baselines.py
 | Subject-dependent (T→E) | ~85.38% | ~0.81 |
 | LOSO (subject-independent) | ~70.97% | ~0.613 |
 
-Your numbers may differ due to epoch extraction (`tmin`/`tmax`), MNE event mapping, TensorFlow version, hardware, and random seed.
+Your numbers may differ due to TensorFlow version, hardware, and random seed.
 
 ## Project layout
 
@@ -108,7 +116,7 @@ Your numbers may differ due to epoch extraction (`tmin`/`tmax`), MNE event mappi
 src/           — data loading, ATCNet, TCN, training, metrics, plots
 scripts/       — CLI entry points
 notebooks/     — dataset & shape checks
-data/raw/      — GDF files (not in git)
+data/raw/      — MAT files (not in git)
 data/results/  — metrics, models, figures
 ```
 

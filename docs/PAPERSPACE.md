@@ -31,25 +31,20 @@ chmod +x scripts/setup_paperspace.sh
 source .venv/bin/activate
 ```
 
-## 4. Subir el dataset
-
-Copia los 18 GDF a:
-
-```
-modelo_atcnet/data/raw/BCICIV_2a_gdf/
-├── A01T.gdf
-├── A01E.gdf
-...
-└── A09E.gdf
-```
-
-Desde tu PC (ejemplo):
+## 4. Descargar el dataset (.mat, como EEG-ATCNet)
 
 ```bash
-scp data/raw/BCICIV_2a_gdf/*.gdf paperspace@<IP>:~/modelo_atcnet/data/raw/BCICIV_2a_gdf/
+source .venv/bin/activate
+python scripts/download_bci2a.py --yes
 ```
 
-O súbelos con el file manager de la notebook al mismo path.
+Archivos en `data/raw/BCICIV_2a_mat/` (`A01T.mat` … `A09E.mat`).
+
+Alternativa: copiar los `.mat` desde tu máquina:
+
+```bash
+scp data/raw/BCICIV_2a_mat/*.mat paperspace@<IP>:~/modelo_atcnet/data/raw/BCICIV_2a_mat/
+```
 
 ## 5. Entrenar
 
@@ -69,13 +64,13 @@ Resultados en `data/results/`.
 
 ## 6. Ruta de datos alternativa (opcional)
 
-Si guardas los GDF fuera del repo:
+Si guardas los MAT fuera del repo:
 
 ```bash
-export MODEL_ATCNET_DATA_DIR=/storage/bci2a_gdf
+export MODEL_ATCNET_DATA_DIR=/storage/bci2a_mat
 ```
 
-Esa carpeta debe contener directamente `A01T.gdf`, etc.
+Esa carpeta debe contener directamente `A01T.mat`, etc.
 
 ## 7. Tiempos orientativos (GPU)
 

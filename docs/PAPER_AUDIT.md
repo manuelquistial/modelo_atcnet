@@ -22,7 +22,7 @@ Parámetros totales: ~115K (paper: 115.2K).
 
 ## Diferencia respecto al repo
 
-- **Datos**: GDF + MNE (oficial usa `.mat` BNCI). Misma ventana temporal.
+- **Datos**: `.mat` BNCI2014_001 (MOABB), mismo loader que `preprocess.load_BCI2a_data` en EEG-ATCNet.
 - **Formato entrada**: `(B,1,22,1125)` con permute interno equivalente a `Permute(3,2,1)` del oficial.
 
 Configuración central: `src/config.py`.

@@ -30,6 +30,6 @@ python scripts/verify_shapes.py
 
 echo ""
 echo "Done. Next steps:"
-echo "  1. Upload GDF files to: data/raw/BCICIV_2a_gdf/"
+echo "  1. python scripts/download_bci2a.py --yes"
 echo "  2. source .venv/bin/activate"
 echo "  3. python scripts/run_subject_dependent.py"

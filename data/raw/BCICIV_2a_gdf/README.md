@@ -1,9 +1,3 @@
-# BCI Competition IV Dataset 2a (GDF)
+# Deprecated
 
-Place 18 files here before training:
-
-- `A01T.gdf`, `A01E.gdf`, …, `A09T.gdf`, `A09E.gdf`
-
-Download: [BCI Competition IV](http://www.bbci.de/competition/iv/#dataset2a)
-
-On **Paperspace**, copy into this folder on persistent storage so data survives restarts.
+Use **`data/raw/BCICIV_2a_mat/`** and `python scripts/download_bci2a.py` (same `.mat` format as [EEG-ATCNet](https://github.com/Altaheri/EEG-ATCNet)).

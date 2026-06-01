@@ -16,13 +16,13 @@ def get_data_dir() -> Path:
 
 
 def get_raw_data_dir() -> Path:
-    """Default: data/raw/BCICIV_2a_gdf. Override with env MODEL_ATCNET_DATA_DIR (Paperspace)."""
+    """Default: data/raw/BCICIV_2a_mat. Override with env MODEL_ATCNET_DATA_DIR (Paperspace)."""
     import os
 
     override = os.environ.get("MODEL_ATCNET_DATA_DIR")
     if override:
         return Path(override)
-    return get_data_dir() / "raw" / "BCICIV_2a_gdf"
+    return get_data_dir() / "raw" / "BCICIV_2a_mat"
 
 
 def get_results_dir() -> Path:
