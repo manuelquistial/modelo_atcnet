@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data (upload on Paperspace / locally — not in git)
+data/raw/**/*.gdf
+data/raw/**/*.mat
+data/processed/
+
+# Training outputs (regenerate on machine)
+data/results/**/*.keras
+data/results/**/*.h5
+data/results/**/*.npz
+
+# Large local files
+*.pdf
+atcnet_implementation/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+wandb/

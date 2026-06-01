@@ -1,0 +1,40 @@
+"""
+Settings aligned with Altaheri/EEG-ATCNet (github.com/Altaheri/EEG-ATCNet).
+https://doi.org/10.1109/TII.2022.3197419
+"""
+
+from __future__ import annotations
+
+# BCI IV-2a: preprocess.load_BCI2a_data uses t1=1.5*fs, t2=6*fs
+EPOCH_TMIN_SEC = 1.5
+EPOCH_TMAX_SEC = 6.0
+
+# models.ATCNet_ / main_TrainTest.py
+CONV_WEIGHT_DECAY = 0.009
+DENSE_WEIGHT_DECAY = 0.5
+CONV_MAX_NORM = 0.6
+
+LEARNING_RATE = 0.001
+BATCH_SIZE = 64
+EPOCHS = 1000
+EARLY_STOP_PATIENCE = 300
+N_TRAIN_RUNS = 10
+
+# ATCNet_ defaults
+N_WINDOWS = 5
+EEGN_F1 = 16
+EEGN_D = 2
+EEGN_KERNEL_SIZE = 64
+EEGN_POOL_SIZE = 7
+EEGN_DROPOUT = 0.3
+TCN_DEPTH = 2
+TCN_KERNEL_SIZE = 4
+TCN_FILTERS = 32
+TCN_DROPOUT = 0.3
+ATT_HEADS = 2
+ATT_KEY_DIM = 8
+ATT_DROPOUT = 0.5
+FUSE_MODE = "average"
+
+USE_CHANNEL_STANDARDIZATION = True
+SHUFFLE_DATA = True
