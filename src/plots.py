@@ -22,14 +22,15 @@ def plot_confusion_matrix(
     save_path = Path(save_path)
     ensure_dir(save_path.parent)
 
-    cm_plot = cm.astype(float)
     if normalize:
+        cm_plot = cm.astype(float)
         row_sums = cm_plot.sum(axis=1, keepdims=True)
         row_sums[row_sums == 0] = 1.0
         cm_plot = cm_plot / row_sums
         fmt = ".2f"
         suffix = " (normalized)"
     else:
+        cm_plot = np.asarray(cm, dtype=int)
         fmt = "d"
         suffix = ""
 
