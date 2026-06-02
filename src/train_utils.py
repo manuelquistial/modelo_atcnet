@@ -10,7 +10,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model, callbacks
 
-from src.config import BATCH_SIZE, EARLY_STOP_PATIENCE, EPOCHS, LEARNING_RATE
+from src.config import BATCH_SIZE, LEARNING_RATE, PAPER_PROFILE, TrainingProfile
 from src.utils import ensure_dir
 
 
@@ -29,8 +29,12 @@ def compile_model(model: Model, learning_rate: float = LEARNING_RATE) -> Model:
     return model
 
 
-def build_callbacks(output_dir: str | Path, model_name: str) -> list[callbacks.Callback]:
-    """Official: EarlyStopping + Checkpoint on val_accuracy; ReduceLROnPlateau on val_loss."""
+def build_callbacks(
+    output_dir: str | Path,
+    model_name: str,
+    profile: TrainingProfile = PAPER_PROFILE,
+) -> list[callbacks.Callback]:
+    """EarlyStopping + Checkpoint on val_accuracy; ReduceLROnPlateau on val_loss."""
     output_dir = ensure_dir(output_dir)
     checkpoint_path = Path(output_dir) / f"{model_name}_best.keras"
     return [
@@ -40,18 +44,18 @@ def build_callbacks(output_dir: str | Path, model_name: str) -> list[callbacks.C
             save_best_only=True,
             save_weights_only=False,
             mode="max",
-            verbose=1,
+            verbose=profile.checkpoint_verbose,
         ),
         callbacks.ReduceLROnPlateau(
             monitor="val_loss",
             factor=0.90,
-            patience=20,
+            patience=profile.lr_reduce_patience,
             min_lr=0.0001,
-            verbose=1,
+            verbose=profile.checkpoint_verbose,
         ),
         callbacks.EarlyStopping(
             monitor="val_accuracy",
-            patience=EARLY_STOP_PATIENCE,
+            patience=profile.early_stop_patience,
             restore_best_weights=True,
             mode="max",
             verbose=1,
@@ -68,7 +72,7 @@ def train_model(
     output_dir: str | Path,
     model_name: str,
     batch_size: int = BATCH_SIZE,
-    epochs: int = EPOCHS,
+    profile: TrainingProfile = PAPER_PROFILE,
 ) -> tf.keras.callbacks.History:
     output_dir = ensure_dir(output_dir)
     history = model.fit(
@@ -76,9 +80,9 @@ def train_model(
         y_train_cat,
         validation_data=(X_val, y_val_cat),
         batch_size=batch_size,
-        epochs=epochs,
-        callbacks=build_callbacks(output_dir, model_name),
-        verbose=1,
+        epochs=profile.epochs,
+        callbacks=build_callbacks(output_dir, model_name, profile=profile),
+        verbose=profile.fit_verbose,
     )
     save_history(history, Path(output_dir) / f"{model_name}_history.json")
     return history

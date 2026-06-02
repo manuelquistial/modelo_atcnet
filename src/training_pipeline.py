@@ -8,7 +8,7 @@ import numpy as np
 from sklearn.utils import shuffle as sk_shuffle
 from tensorflow.keras import Model
 
-from src.config import N_TRAIN_RUNS, SHUFFLE_DATA, USE_CHANNEL_STANDARDIZATION
+from src.config import PAPER_PROFILE, SHUFFLE_DATA, TrainingProfile, USE_CHANNEL_STANDARDIZATION
 from src.preprocessing import prepare_input, standardize_channels, to_categorical
 from src.train_utils import compile_model, set_seed, train_model
 
@@ -45,13 +45,14 @@ def train_best_of_runs(
     evaluate_fn: Callable[[Model], dict],
     output_dir,
     name_prefix: str,
+    profile: TrainingProfile = PAPER_PROFILE,
 ) -> tuple[Model, dict]:
-    """Official n_train=10; validation_data = test; keep best test accuracy."""
+    """Train n_train runs; validation_data = test; keep best test accuracy."""
     best_acc = -1.0
     best_model = None
     best_metrics = None
 
-    for run in range(N_TRAIN_RUNS):
+    for run in range(profile.n_train_runs):
         set_seed(run + 1)
         model = build_model_fn()
         compile_model(model)
@@ -63,6 +64,7 @@ def train_best_of_runs(
             y_test_cat,
             output_dir,
             f"{name_prefix}_run{run + 1}",
+            profile=profile,
         )
         metrics = evaluate_fn(model)
         if metrics["accuracy"] > best_acc:

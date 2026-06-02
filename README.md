@@ -75,6 +75,9 @@ From project root:
 # Subject-dependent (paper ~85.38% acc, ~0.81 κ)
 python scripts/run_subject_dependent.py
 
+# Fast smoke test (~5 h for 9 subjects on GPU; lower accuracy)
+python scripts/run_subject_dependent.py --quick
+
 # LOSO subject-independent (paper ~70.97% acc, ~0.613 κ)
 python scripts/run_loso.py
 
