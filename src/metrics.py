@@ -54,20 +54,17 @@ def prediction_table(
     rows = []
     for i in range(n):
         tl, pl = int(y_true[i]), int(y_pred[i])
-        rows.append(
-            {
-                "trial_index": trial_offset + i,
-                "subject": int(subject_ids[i]),
-                "session": str(session_ids[i]),
-                "true_label": tl,
-                "true_class": CLASS_NAMES[tl],
-                "pred_label": pl,
-                "pred_class": CLASS_NAMES[pl],
-                "is_correct": tl == pl,
-                "prob_left_hand": float(y_prob[i, 0]),
-                "prob_right_hand": float(y_prob[i, 1]),
-                "prob_feet": float(y_prob[i, 2]),
-                "prob_tongue": float(y_prob[i, 3]),
-            }
-        )
+        row = {
+            "trial_index": trial_offset + i,
+            "subject": int(subject_ids[i]),
+            "session": str(session_ids[i]),
+            "true_label": tl,
+            "true_class": CLASS_NAMES[tl],
+            "pred_label": pl,
+            "pred_class": CLASS_NAMES[pl],
+            "is_correct": tl == pl,
+        }
+        for c, name in enumerate(CLASS_NAMES):
+            row[f"prob_{name}"] = float(y_prob[i, c])
+        rows.append(row)
     return pd.DataFrame(rows)
