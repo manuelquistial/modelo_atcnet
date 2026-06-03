@@ -8,7 +8,7 @@ import numpy as np
 from sklearn.utils import shuffle as sk_shuffle
 from tensorflow.keras import Model
 
-from src.config import PAPER_PROFILE, SHUFFLE_DATA, TrainingProfile, USE_CHANNEL_STANDARDIZATION
+from src.config import N_CLASSES, PAPER_PROFILE, SHUFFLE_DATA, TrainingProfile, USE_CHANNEL_STANDARDIZATION
 from src.preprocessing import prepare_input, standardize_channels, to_categorical
 from src.train_utils import compile_model, set_seed, train_model
 
@@ -18,6 +18,7 @@ def prepare_official_splits(
     y_train: np.ndarray,
     X_test: np.ndarray,
     y_test: np.ndarray,
+    n_classes: int = N_CLASSES,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """prepare_input → shuffle → StandardScaler → categorical. Returns X_test 4D + y_test int."""
     X_train = prepare_input(X_train)
@@ -29,9 +30,9 @@ def prepare_official_splits(
         X_train, X_test = standardize_channels(X_train, X_test)
     return (
         X_train,
-        to_categorical(y_train),
+        to_categorical(y_train, n_classes=n_classes),
         X_test,
-        to_categorical(y_test),
+        to_categorical(y_test, n_classes=n_classes),
         y_test,
     )
 

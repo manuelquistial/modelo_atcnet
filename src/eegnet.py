@@ -6,10 +6,13 @@ from tensorflow.keras import Model, layers
 from tensorflow.keras.constraints import max_norm
 
 
+from src.config import N_CLASSES, N_EEG_CHANNELS, N_SAMPLES
+
+
 def build_eegnet(
-    n_channels: int = 22,
-    n_samples: int = 1125,
-    n_classes: int = 4,
+    n_channels: int = N_EEG_CHANNELS,
+    n_samples: int = N_SAMPLES,
+    n_classes: int = N_CLASSES,
     F1: int = 8,
     D: int = 2,
     F2: int = 16,

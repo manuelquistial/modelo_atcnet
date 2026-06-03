@@ -23,10 +23,10 @@ ENV/
 # Jupyter
 .ipynb_checkpoints/
 
-# Data (upload on Paperspace / locally — not in git)
+# Data (MOABB/MNE — not in git)
+data/mne/
 data/mne_cache/
-data/raw/**/*.mat
-data/raw/**/*.gdf
+data/raw/
 data/processed/
 
 # Training outputs (regenerate on machine)

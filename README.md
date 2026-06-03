@@ -1,134 +1,80 @@
-# ATCNet — BCI Competition IV-2a Motor Imagery
+# ATCNet — PhysioNet MI (left vs right hand)
 
 [![Repository](https://img.shields.io/badge/GitHub-manuelquistial%2Fmodelo__atcnet-181717?logo=github)](https://github.com/manuelquistial/modelo_atcnet)
 
-Reproducible implementation of **Physics-Informed Attention Temporal Convolutional Network for EEG-Based Motor Imagery Classification** (Altaheri et al., 2023) on **BCI Competition IV Dataset 2a**.
+ATCNet for **binary motor imagery** on **PhysioNet MI** (MOABB), aligned with [modelo_deep_eeg](https://github.com/manuelquistial/modelo_deep_eeg).
 
-**Repositorio:** `git@github.com:manuelquistial/modelo_atcnet.git`  
-**Ejecución en GPU (Paperspace):** ver [docs/PAPERSPACE.md](docs/PAPERSPACE.md)
-
-## Objective
-
-End-to-end pipeline for EEG motor imagery (4 classes) with:
-
-- Subject-dependent evaluation (train `AxxT`, test `AxxE`)
-- Subject-independent **LOSO** (leave-one-subject-out)
-- Ablation study (5 ATCNet variants)
-- **EEGNet** baseline
-- Per-trial predictions, error analysis, confusion matrices, Cohen's kappa
+**Classes:** `left_hand` vs `right_hand`  
+**Ejecución GPU:** [docs/PAPERSPACE.md](docs/PAPERSPACE.md)
 
 ## Dataset
 
-Same **`.mat`** format as [Altaheri/EEG-ATCNet](https://github.com/Altaheri/EEG-ATCNet) (MOABB `BNCI2014_001`):
-
-```bash
-python scripts/download_bci2a.py --yes
-```
-
-Files end up in `data/raw/BCICIV_2a_mat/`:
-
-```
-data/raw/BCICIV_2a_mat/
-├── A01T.mat
-├── A01E.mat
-├── ...
-├── A09T.mat
-└── A09E.mat
-```
-
-Manual: [BNCI Horizon 001-2014](http://bnci-horizon-2020.eu/database/data-sets) or copy from the official repo layout (`s1/A01T.mat`, …).
-
 | Property | Value |
 |----------|--------|
-| Subjects | 9 |
-| EEG channels | 22 |
-| Sampling rate | 250 Hz |
-| Classes | left hand, right hand, feet, tongue (769–772) |
-| Trials / session | 288 |
-| Model input | 22 × 1125 samples (cue +1.5 s … +6.0 s), shape `(batch, 1, 22, 1125)` |
+| Source | [PhysioNet MI](https://physionet.org/content/eegmmidb/1.0.0/) via MOABB `PhysionetMI` |
+| Subjects | ~108 (excludes subject 88 @ 128 Hz) |
+| Channels | 64 EEG |
+| Sampling rate | 160 Hz |
+| Classes | 2 (left hand, right hand) |
+| Preprocessing | Outlier removal, 4 Hz HPF, time harmonization (see `modelo_deep_eeg`) |
 
-**Aligned with [Altaheri/EEG-ATCNet](https://github.com/Altaheri/EEG-ATCNet):** per-channel `StandardScaler`, `fuse='average'`, test set as validation, 10 training runs, L2 + max-norm as in `models.py`.
+### Download
+
+```bash
+python scripts/download_physionet.py --subjects 1-5   # smoke test
+python scripts/download_physionet.py                  # full cohort (~108 subjects)
+```
+
+Data stored under `data/mne/` (MOABB/MNE cache).
 
 ## Installation
 
 ```bash
-cd modelo_atcnet
 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Settings: `src/config.py`.
-
-## Verify model shapes (no data required)
+## Verify model shapes (no download required)
 
 ```bash
 python scripts/verify_shapes.py
 ```
 
-Flow: `(B,1,22,1125) → CV (B,20,32) → 5×TCN → Dense(4) → Average → softmax`.
+Input: `(B, 1, 64, T)` → binary softmax.
 
-## Training & evaluation
-
-From project root:
+## Training
 
 ```bash
-# Subject-dependent (paper ~85.38% acc, ~0.81 κ)
-python scripts/run_subject_dependent.py
+# Hold-out: 80% subjects train, 20% test (subject-level split)
+python scripts/run_holdout.py
+python scripts/run_holdout.py --quick --subjects 1-10
 
-# Fast smoke test (~5 h for 9 subjects on GPU; lower accuracy)
-python scripts/run_subject_dependent.py --quick
+# LOSO (leave-one-subject-out)
+python scripts/run_loso.py --quick --subjects 1-10
 
-# LOSO subject-independent (paper ~70.97% acc, ~0.613 κ)
-python scripts/run_loso.py
-
-# Ablation (5 variants × 9 subjects)
-python scripts/run_ablation.py
-
-# EEGNet baseline (subject-dependent)
-python scripts/run_baselines.py
+# Ablation + EEGNet baseline
+python scripts/run_ablation.py --quick
+python scripts/run_baselines.py --quick
 ```
 
-**Note:** Full runs use up to 1000 epochs with early stopping (patience 300). Use GPU when possible; ablation trains 45 models.
-
-## Output files
+## Outputs
 
 | Path | Description |
 |------|-------------|
-| `data/results/subject_dependent/subject_dependent_metrics.csv` | Per-subject + mean/std accuracy & kappa |
-| `data/results/subject_dependent/subject_XX_predictions.csv` | Per-trial predictions |
-| `data/results/subject_dependent/subject_XX_errors.csv` | Misclassified trials |
-| `data/results/loso/loso_metrics.csv` | LOSO metrics |
-| `data/results/loso/loso_test_subject_XX_predictions.csv` | LOSO predictions |
-| `data/results/ablation/ablation_raw_results.csv` | All variant × subject runs |
-| `data/results/ablation/ablation_summary.csv` | Mean/std per variant |
-| `data/results/baselines/eegnet_subject_dependent_metrics.csv` | EEGNet comparison |
-| `data/results/figures/*.png` | Confusion matrices, ablation plot |
-
-## Reference results (paper)
-
-| Protocol | Accuracy | Cohen's κ |
-|----------|----------|-----------|
-| Subject-dependent (T→E) | ~85.38% | ~0.81 |
-| LOSO (subject-independent) | ~70.97% | ~0.613 |
-
-Your numbers may differ due to TensorFlow version, hardware, and random seed.
+| `data/results/holdout/holdout_metrics.csv` | Hold-out accuracy & kappa |
+| `data/results/loso/loso_metrics.csv` | LOSO per-subject metrics |
+| `data/results/figures/*.png` | Confusion matrices |
 
 ## Project layout
 
 ```
-src/           — data loading, ATCNet, TCN, training, metrics, plots
-scripts/       — CLI entry points
-notebooks/     — dataset & shape checks
-data/raw/      — MAT files (not in git)
-data/results/  — metrics, models, figures
+src/physionet/   — MOABB loader, preprocessing, splits (from modelo_deep_eeg)
+src/atcnet.py    — ATCNet architecture
+scripts/         — download, holdout, LOSO, ablation
+data/mne/        — raw MOABB downloads (not in git)
 ```
 
-## Reproducibility
+## Reference
 
-- Alineado con [EEG-ATCNet](https://github.com/Altaheri/EEG-ATCNet): ver `docs/PAPER_AUDIT.md`
-- Adam lr=0.001, batch 64, 1000 épocas, early stopping `val_accuracy`, 10 runs
-- Configuración: `src/config.py`
-
-## License
-
-Research / educational use. Cite Altaheri et al. (2023) when using this code.
+- Altaheri et al. (2023) — ATCNet architecture
+- `modelo_deep_eeg` — PhysioNet MI loading & preprocessing protocol

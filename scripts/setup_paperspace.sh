@@ -30,6 +30,5 @@ python scripts/verify_shapes.py
 
 echo ""
 echo "Done. Next steps:"
-echo "  1. python scripts/download_bci2a.py --yes"
-echo "  2. source .venv/bin/activate"
-echo "  3. python scripts/run_subject_dependent.py"
+echo "  1. python scripts/download_physionet.py --subjects 1-10"
+echo "  2. python scripts/run_holdout.py --quick"

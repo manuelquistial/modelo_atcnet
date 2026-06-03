@@ -1,17 +1,29 @@
 """
-Settings aligned with Altaheri/EEG-ATCNet (github.com/Altaheri/EEG-ATCNet).
-https://doi.org/10.1109/TII.2022.3197419
+ATCNet settings — PhysioNet MI binary left/right (modelo_deep_eeg aligned).
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
-# BCI IV-2a: preprocess.load_BCI2a_data uses t1=1.5*fs, t2=6*fs
-EPOCH_TMIN_SEC = 1.5
-EPOCH_TMAX_SEC = 6.0
+# PhysioNet MI (MOABB MotorImagery left_hand / right_hand)
+N_CLASSES = 2
+N_EEG_CHANNELS = 64
+FS = 160
+# Set after preprocessing (harmonized min n_times across cohort); placeholder for verify_shapes.
+N_SAMPLES = 480
 
-# models.ATCNet_ / main_TrainTest.py
+CLASS_NAMES = ["left_hand", "right_hand"]
+
+# Hold-out split (subject-level, no trial leakage)
+HOLDOUT_TEST_SIZE = 0.20
+HOLDOUT_RANDOM_STATE = 42
+
+# Preprocessing (modelo_deep_eeg default)
+HIGHPASS_HZ = 4.0
+OUTLIER_UV = 800.0
+
+# ATCNet architecture (Altaheri/EEG-ATCNet)
 CONV_WEIGHT_DECAY = 0.009
 DENSE_WEIGHT_DECAY = 0.5
 CONV_MAX_NORM = 0.6
@@ -22,7 +34,6 @@ EPOCHS = 1000
 EARLY_STOP_PATIENCE = 300
 N_TRAIN_RUNS = 10
 
-# ATCNet_ defaults
 N_WINDOWS = 5
 EEGN_F1 = 16
 EEGN_D = 2
@@ -42,13 +53,8 @@ USE_CHANNEL_STANDARDIZATION = True
 SHUFFLE_DATA = True
 
 
-# Training profiles (see scripts/run_subject_dependent.py --quick)
-
-
 @dataclass(frozen=True)
 class TrainingProfile:
-    """Hyperparameters for train_model / train_best_of_runs."""
-
     n_train_runs: int
     epochs: int
     early_stop_patience: int
@@ -66,7 +72,6 @@ PAPER_PROFILE = TrainingProfile(
     checkpoint_verbose=1,
 )
 
-# ~30–40 min/subject × 9 ≈ 5 h on a typical Paperspace GPU (not paper-grade).
 QUICK_PROFILE = TrainingProfile(
     n_train_runs=1,
     epochs=200,

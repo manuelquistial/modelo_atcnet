@@ -24,6 +24,9 @@ from src.config import (
     EEGN_KERNEL_SIZE,
     EEGN_POOL_SIZE,
     FUSE_MODE,
+    N_CLASSES,
+    N_EEG_CHANNELS,
+    N_SAMPLES,
     N_WINDOWS,
     TCN_DEPTH,
     TCN_DROPOUT,
@@ -94,9 +97,9 @@ def convolutional_block(
 
 
 def build_atcnet(
-    n_channels: int = 22,
-    n_samples: int = 1125,
-    n_classes: int = 4,
+    n_channels: int = N_EEG_CHANNELS,
+    n_samples: int = N_SAMPLES,
+    n_classes: int = N_CLASSES,
     n_windows: int = N_WINDOWS,
     fuse: str = FUSE_MODE,
     use_attention: bool = True,

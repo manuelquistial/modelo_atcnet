@@ -6,6 +6,8 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.utils import to_categorical as keras_to_categorical
 
+from src.config import N_CLASSES
+
 
 def prepare_input(X: np.ndarray) -> np.ndarray:
     """
@@ -17,7 +19,7 @@ def prepare_input(X: np.ndarray) -> np.ndarray:
     return X[:, np.newaxis, :, :]
 
 
-def to_categorical(y: np.ndarray, n_classes: int = 4) -> np.ndarray:
+def to_categorical(y: np.ndarray, n_classes: int = N_CLASSES) -> np.ndarray:
     y = np.asarray(y).astype(int)
     return keras_to_categorical(y, num_classes=n_classes)
 

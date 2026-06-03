@@ -15,14 +15,19 @@ def get_data_dir() -> Path:
     return get_project_root() / "data"
 
 
-def get_raw_data_dir() -> Path:
-    """Default: data/raw/BCICIV_2a_mat. Override with env MODEL_ATCNET_DATA_DIR (Paperspace)."""
+def get_mne_data_dir() -> Path:
+    """MOABB/MNE download path for PhysioNet MI. Override with PHYSIONET_MI_DATA_DIR."""
     import os
 
-    override = os.environ.get("MODEL_ATCNET_DATA_DIR")
+    override = os.environ.get("PHYSIONET_MI_DATA_DIR") or os.environ.get("MODEL_ATCNET_DATA_DIR")
     if override:
         return Path(override)
-    return get_data_dir() / "raw" / "BCICIV_2a_mat"
+    return get_data_dir() / "mne"
+
+
+def get_raw_data_dir() -> Path:
+    """Alias for MNE/MOABB data directory."""
+    return get_mne_data_dir()
 
 
 def get_results_dir() -> Path:

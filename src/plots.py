@@ -78,16 +78,21 @@ def plot_ablation_summary(summary_df: pd.DataFrame, save_path: str | Path) -> No
     save_path = Path(save_path)
     ensure_dir(save_path.parent)
 
+    acc_col = "accuracy_mean" if "accuracy_mean" in summary_df.columns else "accuracy"
+    kappa_col = "kappa_mean" if "kappa_mean" in summary_df.columns else "kappa"
+    acc_err = summary_df["accuracy_std"] if "accuracy_std" in summary_df.columns else None
+    kappa_err = summary_df["kappa_std"] if "kappa_std" in summary_df.columns else None
+
     fig, ax = plt.subplots(figsize=(10, 5))
     x = np.arange(len(summary_df))
     width = 0.35
-    ax.bar(x - width / 2, summary_df["accuracy_mean"], width, yerr=summary_df["accuracy_std"], label="Accuracy")
-    ax.bar(x + width / 2, summary_df["kappa_mean"], width, yerr=summary_df["kappa_std"], label="Kappa")
+    ax.bar(x - width / 2, summary_df[acc_col], width, yerr=acc_err, label="Accuracy")
+    ax.bar(x + width / 2, summary_df[kappa_col], width, yerr=kappa_err, label="Kappa")
     ax.set_xticks(x)
     ax.set_xticklabels(summary_df["variant"], rotation=25, ha="right")
     ax.set_ylim(0, 1.05)
     ax.legend()
-    ax.set_title("Ablation study (subject-dependent)")
+    ax.set_title("Ablation study")
     plt.tight_layout()
     fig.savefig(save_path, dpi=150)
     plt.close(fig)

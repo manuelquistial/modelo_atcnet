@@ -5,6 +5,7 @@ from __future__ import annotations
 from tensorflow.keras import Model
 
 from src.atcnet import build_atcnet
+from src.config import N_CLASSES, N_EEG_CHANNELS, N_SAMPLES
 
 ABLATION_VARIANTS = (
     "full_atcnet",
@@ -20,9 +21,9 @@ def build_ablation_model(variant: str, **kwargs) -> Model:
         raise ValueError(f"Unknown variant '{variant}'. Choose from {ABLATION_VARIANTS}")
 
     base = dict(
-        n_channels=kwargs.get("n_channels", 22),
-        n_samples=kwargs.get("n_samples", 1125),
-        n_classes=kwargs.get("n_classes", 4),
+        n_channels=kwargs.get("n_channels", N_EEG_CHANNELS),
+        n_samples=kwargs.get("n_samples", N_SAMPLES),
+        n_classes=kwargs.get("n_classes", N_CLASSES),
         variant=variant,
     )
 
